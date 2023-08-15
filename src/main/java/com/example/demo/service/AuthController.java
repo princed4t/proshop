@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
 import java.net.http.HttpHeaders;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.Customer;
 import com.example.demo.Userdetailservice;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,12 +48,17 @@ public class AuthController {
 		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
 		String token = this.helper.generateToken(userDetails);
 
+			String username = userDetails.getUsername();
+			Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+		      List<String> collect = authorities.stream().map(i->i.getAuthority()).collect(Collectors.toList());
+		
+		
 		JwtResponse response = new JwtResponse();
 		response.setToken(token);
-		 org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
-		// header.add("Access-Control-Allow-Origin", "http://localhost:3000");
-		
-		return new ResponseEntity<>(response,HttpStatus.OK);
+		response.setEmail(username);
+		response.setRoles(collect);
+		return new ResponseEntity<>(response,HttpStatus.OK); 
+		 
 	}
 
 	private void doAuthenticate(String email, String password) {

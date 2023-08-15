@@ -1,6 +1,7 @@
 package com.example.demo;
 
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,7 @@ public class SpringConfiguration {
 	@Autowired
 	AuthenticationEntryPoint point;
 
+
 	@Bean
 	public UserDetailsService userDetailsService() {
 
@@ -62,7 +64,9 @@ public class SpringConfiguration {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable().authorizeHttpRequests().requestMatchers("/home/addcust").permitAll().and()
-				.authorizeHttpRequests().requestMatchers("/auth/login").permitAll().and().authorizeHttpRequests()
+				.authorizeHttpRequests().requestMatchers("/auth/login").permitAll().and()
+				.authorizeHttpRequests().requestMatchers("/home/download/**").permitAll()
+				.and().authorizeHttpRequests()
 				.requestMatchers("/home/**").authenticated().and()
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -101,12 +105,7 @@ public class SpringConfiguration {
 		corsConfiguration.addAllowedMethod("DELETE");
 		corsConfiguration.addAllowedMethod("OPTIONS");
 		corsConfiguration.setMaxAge(3600L);
-		source.registerCorsConfiguration("/**", corsConfiguration);
-     
-		
-		
-		      
-		
+		source.registerCorsConfiguration("/**", corsConfiguration);	
 		FilterRegistrationBean fb = new FilterRegistrationBean(new CorsFilter(source));
          fb.setOrder(-110);
 		return fb;
