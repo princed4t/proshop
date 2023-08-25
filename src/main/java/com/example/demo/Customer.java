@@ -30,6 +30,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class Customer implements UserDetails{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;

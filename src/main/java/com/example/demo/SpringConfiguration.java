@@ -50,7 +50,7 @@ public class SpringConfiguration {
 		 * UserDetails usernormal=User.withUsername("shefalika")
 		 * .password(this.passwordEncoder().encode("shefalika")).roles("USER").build();
 		 */
-
+		System.out.println("ilove you");
 		return new Userdetailservice();
 
 	}
